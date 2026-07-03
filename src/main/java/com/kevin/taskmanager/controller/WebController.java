@@ -4,11 +4,13 @@ import com.kevin.taskmanager.model.Task;
 import com.kevin.taskmanager.model.TaskPriority;
 import com.kevin.taskmanager.model.TaskStatus;
 import com.kevin.taskmanager.observer.SseTaskObserver;
+import com.kevin.taskmanager.service.DuplicateTaskTitleException;
 import com.kevin.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -43,6 +46,7 @@ public class WebController {
     public String listTasks(
             @RequestParam(required = false) TaskStatus status,
             @RequestParam(required = false) TaskPriority priority,
+            @RequestParam(required = false, defaultValue = "dueDate") String sort,
             Model model) {
 
         List<Task> tasks = status != null
@@ -55,18 +59,30 @@ public class WebController {
                     .toList();
         }
 
+        Comparator<Task> comparator = switch (sort) {
+            case "priority" -> Comparator.comparingInt(
+                    (Task t) -> t.getPriority() == null ? -1 : t.getPriority().ordinal()).reversed();
+            case "title" -> Comparator.comparing(Task::getTitle, Comparator.nullsLast(String::compareToIgnoreCase));
+            default -> Comparator.comparing(Task::getDueDate, Comparator.nullsLast(Comparator.naturalOrder()));
+        };
+        tasks = tasks.stream().sorted(comparator).toList();
+
         model.addAttribute("tasks", tasks);
         model.addAttribute("statuses", TaskStatus.values());
         model.addAttribute("priorities", TaskPriority.values());
         model.addAttribute("selectedStatus", status);
         model.addAttribute("selectedPriority", priority);
+        model.addAttribute("selectedSort", sort);
 
         return "tasks";
     }
 
     @GetMapping("/tasks/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("task", new Task());
+        Task task = new Task();
+        task.setPriority(TaskPriority.MEDIUM);
+        task.setStatus(TaskStatus.PENDING);
+        model.addAttribute("task", task);
         model.addAttribute("statuses", TaskStatus.values());
         model.addAttribute("priorities", TaskPriority.values());
         return "task-form";
@@ -91,7 +107,14 @@ public class WebController {
             return "task-form";
         }
 
-        taskService.saveTask(task);
+        try {
+            taskService.saveTask(task);
+        } catch (DuplicateTaskTitleException ex) {
+            bindingResult.addError(new FieldError("task", "title", ex.getMessage()));
+            model.addAttribute("statuses", TaskStatus.values());
+            model.addAttribute("priorities", TaskPriority.values());
+            return "task-form";
+        }
         return "redirect:/tasks";
     }
 
@@ -103,7 +126,14 @@ public class WebController {
             return "task-form";
         }
 
-        taskService.updateTask(id, task);
+        try {
+            taskService.updateTask(id, task);
+        } catch (DuplicateTaskTitleException ex) {
+            bindingResult.addError(new FieldError("task", "title", ex.getMessage()));
+            model.addAttribute("statuses", TaskStatus.values());
+            model.addAttribute("priorities", TaskPriority.values());
+            return "task-form";
+        }
         return "redirect:/tasks";
     }
 

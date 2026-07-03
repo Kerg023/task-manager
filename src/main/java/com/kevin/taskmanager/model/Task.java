@@ -1,6 +1,7 @@
 package com.kevin.taskmanager.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -14,6 +15,7 @@ public class Task {
     private Long taskId;
 
     @Column(nullable = false)
+    @NotBlank(message = "El título es obligatorio")
     @Size(max = 150, message = "El título no puede superar los 150 caracteres")
     private String title;
 

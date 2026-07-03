@@ -40,6 +40,9 @@ public class TaskService {
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
         }
+        if (taskRepository.existsByTitleIgnoreCase(task.getTitle())) {
+            throw new DuplicateTaskTitleException(task.getTitle());
+        }
         if (task.getStatus() == null) {
             task.setStatus(TaskStatus.PENDING);
         }
@@ -59,6 +62,10 @@ public class TaskService {
     public Task updateTask(Long taskId, Task updatedTask) {
         Task task = getTaskById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (taskRepository.existsByTitleIgnoreCaseAndTaskIdNot(updatedTask.getTitle(), taskId)) {
+            throw new DuplicateTaskTitleException(updatedTask.getTitle());
+        }
 
         task.setTitle(updatedTask.getTitle());
         task.setDescription(updatedTask.getDescription());

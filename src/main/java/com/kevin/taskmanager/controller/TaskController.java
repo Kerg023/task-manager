@@ -3,6 +3,7 @@ package com.kevin.taskmanager.controller;
 import com.kevin.taskmanager.model.Task;
 import com.kevin.taskmanager.model.TaskPriority;
 import com.kevin.taskmanager.model.TaskStatus;
+import com.kevin.taskmanager.service.DuplicateTaskTitleException;
 import com.kevin.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -83,5 +84,11 @@ public class TaskController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(DuplicateTaskTitleException.class)
+    public Map<String, String> handleDuplicateTitle(DuplicateTaskTitleException ex) {
+        return Map.of("title", ex.getMessage());
     }
 }

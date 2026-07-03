@@ -2,6 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${task.taskId} != null ? 'Editar Tarea' : 'Nueva Tarea'">Tarea</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
@@ -14,7 +15,7 @@
           th:object="${task}" method="post">
 
         <label for="title">Título</label>
-        <input type="text" id="title" th:field="*{title}" maxlength="150"
+        <input type="text" id="title" th:field="*{title}" maxlength="150" required
                th:classappend="${#fields.hasErrors('title')} ? 'input-error'">
         <p class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
 
@@ -28,12 +29,16 @@
 
         <label for="priority">Prioridad</label>
         <select id="priority" th:field="*{priority}">
-            <option th:each="p : ${priorities}" th:value="${p}" th:text="${p}"></option>
+            <option th:each="p : ${priorities}" th:value="${p}"
+                    th:text="${p.name() == 'HIGH'} ? 'Alta' : (${p.name() == 'MEDIUM'} ? 'Media' : 'Baja')">
+            </option>
         </select>
 
         <label for="status">Estado</label>
         <select id="status" th:field="*{status}">
-            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+            <option th:each="s : ${statuses}" th:value="${s}"
+                    th:text="${s.name() == 'PENDING'} ? 'Pendiente' : (${s.name() == 'IN_PROGRESS'} ? 'En progreso' : 'Completada')">
+            </option>
         </select>
 
         <button type="submit" class="btn" style="margin-top:24px;">Guardar</button>
