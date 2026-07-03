@@ -3,6 +3,7 @@ package com.kevin.taskmanager.controller;
 import com.kevin.taskmanager.model.Task;
 import com.kevin.taskmanager.model.TaskPriority;
 import com.kevin.taskmanager.model.TaskStatus;
+import com.kevin.taskmanager.observer.SseTaskObserver;
 import com.kevin.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -20,14 +22,21 @@ import java.util.List;
 public class WebController {
 
     private final TaskService taskService;
+    private final SseTaskObserver sseTaskObserver;
 
-    public WebController(TaskService taskService) {
+    public WebController(TaskService taskService, SseTaskObserver sseTaskObserver) {
         this.taskService = taskService;
+        this.sseTaskObserver = sseTaskObserver;
     }
 
     @GetMapping("/")
     public String home() {
         return "redirect:/tasks";
+    }
+
+    @GetMapping("/tasks/stream")
+    public SseEmitter streamTasks() {
+        return sseTaskObserver.subscribe();
     }
 
     @GetMapping("/tasks")

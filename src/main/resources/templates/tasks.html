@@ -3,138 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Tareas</title>
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
 <div class="header">
     <div>
-        <h1 style="margin:0;">Gestión de Tareas</h1>
-        <p class="subtitle">
-            Organiza y administra tus tareas de forma eficiente
-        </p>
+        <h1>Tareas</h1>
+        <p class="subtitle" th:text="${tasks.size()} + ' tareas'"></p>
     </div>
-
-    <a class="btn" th:href="@{/tasks/new}">
-        <i class="ti ti-plus"></i>
-        Nueva Tarea
-    </a>
+    <a class="btn" th:href="@{/tasks/new}"><i class="ti ti-plus"></i>Nueva</a>
 </div>
 
-<form th:action="@{/tasks}" method="get" class="filters">
+<div class="filters">
+    <a th:href="@{/tasks}" th:classappend="${selectedStatus == null and selectedPriority == null} ? 'active'">Todas</a>
+    <a th:href="@{/tasks(status='PENDING')}" th:classappend="${selectedStatus != null and selectedStatus.name() == 'PENDING'} ? 'active'">Pendientes</a>
+    <a th:href="@{/tasks(status='IN_PROGRESS')}" th:classappend="${selectedStatus != null and selectedStatus.name() == 'IN_PROGRESS'} ? 'active'">En progreso</a>
+    <a th:href="@{/tasks(status='COMPLETED')}" th:classappend="${selectedStatus != null and selectedStatus.name() == 'COMPLETED'} ? 'active'">Completadas</a>
+</div>
 
-    <select name="status" onchange="this.form.submit()">
-        <option value="">Todos los estados</option>
-
-        <option th:each="s : ${statuses}"
-                th:value="${s}"
-                th:text="${s}">
-        </option>
-    </select>
-
-    <select name="priority" onchange="this.form.submit()">
-        <option value="">Todas las prioridades</option>
-
-        <option th:each="p : ${priorities}"
-                th:value="${p}"
-                th:text="${p}">
-        </option>
-    </select>
-
-</form>
-
-<div class="cards">
-
-    <div class="card" th:each="task : ${tasks}">
-
-        <div style="flex:1">
-
-            <p class="card-title"
-               th:text="${task.title != null ? task.title : 'Sin título'}">
-            </p>
-
-            <p class="card-desc"
-               th:text="${task.description != null ? task.description : 'Sin descripción'}">
-            </p>
-
-            <div class="card-meta">
-
-                <span class="date"
-                      th:if="${task.dueDate != null}">
-                    <i class="ti ti-calendar"></i>
-                    <span th:text="${task.dueDate}"></span>
-                </span>
-
-                <span class="badge"
-                      th:classappend="' priority-' + ${task.priority != null ? task.priority : 'SIN_PRIORIDAD'}"
-                      th:text="${task.priority != null ? task.priority : 'Sin prioridad'}">
-                </span>
-
-                <span class="badge"
-                      th:classappend="' status-' + ${task.status != null ? task.status : 'SIN_ESTADO'}"
-                      th:text="${task.status != null ? task.status : 'Sin estado'}">
-                </span>
-
+<div class="task-list" id="taskTableBody">
+    <div class="task" th:each="task : ${tasks}" th:classappend="${task.status != null and task.status.name() == 'COMPLETED'} ? 'completed'">
+        <div class="task-info">
+            <div class="task-title-row">
+                <span class="dot" th:classappend="'dot-' + ${task.priority != null ? task.priority : 'MEDIUM'}"></span>
+                <p class="task-title" th:text="${task.title != null ? task.title : 'Sin título'}"></p>
             </div>
-
+            <p class="task-desc" th:if="${task.description != null}" th:text="${task.description}"></p>
+            <div class="task-meta">
+                <span th:if="${task.dueDate != null}" th:text="${task.dueDate}"></span>
+                <span th:text="${task.status != null ? task.status : 'Sin estado'}"></span>
+            </div>
         </div>
-
-        <div class="card-actions">
-
-            <a class="btn-icon"
-               th:href="@{/tasks/{id}/edit(id=${task.taskId})}">
-                <i class="ti ti-edit"></i>
-            </a>
-
-            <form th:action="@{/tasks/{id}/delete(id=${task.taskId})}"
-                  method="post">
-
-                <button type="submit"
-                        class="btn-icon">
-                    <i class="ti ti-trash"></i>
-                </button>
-
+        <div class="task-actions">
+            <a th:href="@{/tasks/{id}/edit(id=${task.taskId})}" class="btn-icon" title="Editar"><i class="ti ti-edit"></i></a>
+            <form th:action="@{/tasks/{id}/delete(id=${task.taskId})}" method="post"
+                  onsubmit="return confirm('¿Eliminar esta tarea?');">
+                <button type="submit" class="btn-icon" title="Eliminar"><i class="ti ti-trash"></i></button>
             </form>
-
         </div>
-
     </div>
-
 </div>
 
-<p class="empty"
-   th:if="${tasks.isEmpty()}">
-    No hay tareas registradas.
-</p>
+<p class="empty" th:if="${tasks.isEmpty()}">No hay tareas registradas.</p>
 
-<div class="stats">
-
-    <div class="stat">
-        <p class="stat-num"
-           th:text="${tasks.?[status.name() == 'PENDING'].size()}">
-        </p>
-        <p class="stat-label">Pendientes</p>
-    </div>
-
-    <div class="stat">
-        <p class="stat-num"
-           th:text="${tasks.?[status.name() == 'IN_PROGRESS'].size()}">
-        </p>
-        <p class="stat-label">En progreso</p>
-    </div>
-
-    <div class="stat">
-        <p class="stat-num"
-           th:text="${tasks.?[status.name() == 'COMPLETED'].size()}">
-        </p>
-        <p class="stat-label">Completadas</p>
-    </div>
-
+<div class="summary">
+    <span><strong th:text="${tasks.?[status != null and status.name() == 'PENDING'].size()}">0</strong> pendiente</span>
+    <span><strong th:text="${tasks.?[status != null and status.name() == 'IN_PROGRESS'].size()}">0</strong> en progreso</span>
+    <span><strong th:text="${tasks.?[status != null and status.name() == 'COMPLETED'].size()}">0</strong> completada</span>
 </div>
+
+<script>
+    const eventSource = new EventSource('/tasks/stream');
+
+    function refreshTaskList() {
+        fetch(window.location.href)
+            .then(res => res.text())
+            .then(html => {
+                const nuevaLista = new DOMParser().parseFromString(html, 'text/html').querySelector('#taskTableBody');
+                document.querySelector('#taskTableBody').innerHTML = nuevaLista.innerHTML;
+            });
+    }
+
+    eventSource.addEventListener('task-created', refreshTaskList);
+    eventSource.addEventListener('task-updated', refreshTaskList);
+    eventSource.addEventListener('task-deleted', refreshTaskList);
+</script>
 
 </body>
 </html>
