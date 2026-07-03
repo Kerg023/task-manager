@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Tareas</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1 style="margin:0;">Gestión de Tareas</h1>
+        <p class="subtitle">
+            Organiza y administra tus tareas de forma eficiente
+        </p>
+    </div>
+
+    <a class="btn" th:href="@{/tasks/new}">
+        <i class="ti ti-plus"></i>
+        Nueva Tarea
+    </a>
+</div>
+
+<form th:action="@{/tasks}" method="get" class="filters">
+
+    <select name="status" onchange="this.form.submit()">
+        <option value="">Todos los estados</option>
+
+        <option th:each="s : ${statuses}"
+                th:value="${s}"
+                th:text="${s}">
+        </option>
+    </select>
+
+    <select name="priority" onchange="this.form.submit()">
+        <option value="">Todas las prioridades</option>
+
+        <option th:each="p : ${priorities}"
+                th:value="${p}"
+                th:text="${p}">
+        </option>
+    </select>
+
+</form>
+
+<div class="cards">
+
+    <div class="card" th:each="task : ${tasks}">
+
+        <div style="flex:1">
+
+            <p class="card-title"
+               th:text="${task.title != null ? task.title : 'Sin título'}">
+            </p>
+
+            <p class="card-desc"
+               th:text="${task.description != null ? task.description : 'Sin descripción'}">
+            </p>
+
+            <div class="card-meta">
+
+                <span class="date"
+                      th:if="${task.dueDate != null}">
+                    <i class="ti ti-calendar"></i>
+                    <span th:text="${task.dueDate}"></span>
+                </span>
+
+                <span class="badge"
+                      th:classappend="' priority-' + ${task.priority != null ? task.priority : 'SIN_PRIORIDAD'}"
+                      th:text="${task.priority != null ? task.priority : 'Sin prioridad'}">
+                </span>
+
+                <span class="badge"
+                      th:classappend="' status-' + ${task.status != null ? task.status : 'SIN_ESTADO'}"
+                      th:text="${task.status != null ? task.status : 'Sin estado'}">
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="card-actions">
+
+            <a class="btn-icon"
+               th:href="@{/tasks/{id}/edit(id=${task.taskId})}">
+                <i class="ti ti-edit"></i>
+            </a>
+
+            <form th:action="@{/tasks/{id}/delete(id=${task.taskId})}"
+                  method="post">
+
+                <button type="submit"
+                        class="btn-icon">
+                    <i class="ti ti-trash"></i>
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<p class="empty"
+   th:if="${tasks.isEmpty()}">
+    No hay tareas registradas.
+</p>
+
+<div class="stats">
+
+    <div class="stat">
+        <p class="stat-num"
+           th:text="${tasks.?[status.name() == 'PENDING'].size()}">
+        </p>
+        <p class="stat-label">Pendientes</p>
+    </div>
+
+    <div class="stat">
+        <p class="stat-num"
+           th:text="${tasks.?[status.name() == 'IN_PROGRESS'].size()}">
+        </p>
+        <p class="stat-label">En progreso</p>
+    </div>
+
+    <div class="stat">
+        <p class="stat-num"
+           th:text="${tasks.?[status.name() == 'COMPLETED'].size()}">
+        </p>
+        <p class="stat-label">Completadas</p>
+    </div>
+
+</div>
+
+</body>
+</html>

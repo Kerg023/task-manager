@@ -1,0 +1,206 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: #222;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 20px;
+}
+
+.btn {
+    background: #2563eb;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    padding: 4px;
+    display: inline-flex;
+}
+
+.btn-icon:hover {
+    color: #222;
+}
+
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+select {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* Tarjetas de tareas */
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin: 0 0 4px;
+}
+
+.card-desc {
+    font-size: 13px;
+    color: #666;
+    margin: 0 0 8px;
+}
+
+.card-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+    flex-wrap: wrap;
+}
+
+.card-meta .date {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Badges de prioridad y estado */
+
+.badge {
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.priority-HIGH   { background: #fde2e2; color: #b42318; }
+.priority-MEDIUM { background: #fef0c7; color: #92400e; }
+.priority-LOW    { background: #d1fadf; color: #027a48; }
+
+.status-PENDING     { background: #f2f4f7; color: #475467; }
+.status-IN_PROGRESS { background: #e0eaff; color: #1d4ed8; }
+.status-COMPLETED   { background: #d1fadf; color: #027a48; }
+
+/* Panel de estadísticas */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.stat {
+    background: #f7f7f5;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.stat-num {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #666;
+    margin: 2px 0 0;
+}
+
+.empty {
+    text-align: center;
+    color: #888;
+    padding: 30px 0;
+}
+
+/* Formulario (crear/editar tarea) */
+
+.form-container {
+    max-width: 500px;
+    margin: 60px auto;
+}
+
+.form-container label {
+    display: block;
+    margin-top: 14px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.form-container input,
+.form-container textarea,
+.form-container select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.form-container textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.cancel-link {
+    display: inline-block;
+    margin-top: 20px;
+    margin-left: 10px;
+    color: #555;
+    text-decoration: none;
+}
+
+.error {
+    color: #dc2626;
+    font-size: 13px;
+}

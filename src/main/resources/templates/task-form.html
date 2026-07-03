@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title th:text="${task.taskId != null}
+            ? 'Editar Tarea'
+            : 'Nueva Tarea'">
+        Tarea
+    </title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div class="form-container">
+
+    <h1 th:text="${task.taskId != null}
+            ? 'Editar Tarea'
+            : 'Nueva Tarea'">
+        Tarea
+    </h1>
+
+    <form th:action="${task.taskId != null}
+          ? @{/tasks/{id}(id=${task.taskId})}
+          : @{/tasks}"
+          th:object="${task}"
+          method="post">
+
+        <label for="title">Título *</label>
+
+        <input type="text"
+               id="title"
+               th:field="*{title}"
+               maxlength="150"
+               required>
+        <div class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+
+        <label for="description">Descripción</label>
+
+        <textarea id="description"
+                  th:field="*{description}"
+                  maxlength="1000">
+        </textarea>
+        <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+
+        <label for="dueDate">Fecha de vencimiento</label>
+
+        <input type="date"
+               id="dueDate"
+               th:field="*{dueDate}">
+
+        <label for="priority">Prioridad</label>
+
+        <select id="priority"
+                th:field="*{priority}">
+
+            <option th:each="p : ${priorities}"
+                    th:value="${p}"
+                    th:text="${p}">
+            </option>
+
+        </select>
+
+        <label for="status">Estado</label>
+
+        <select id="status"
+                th:field="*{status}">
+
+            <option th:each="s : ${statuses}"
+                    th:value="${s}"
+                    th:text="${s}">
+            </option>
+
+        </select>
+
+        <button type="submit"
+                class="btn"
+                style="margin-top:20px;">
+            Guardar
+        </button>
+
+        <a class="cancel-link"
+           th:href="@{/tasks}">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>
