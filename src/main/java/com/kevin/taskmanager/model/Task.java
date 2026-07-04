@@ -32,17 +32,25 @@ public class Task {
 
     private LocalDate dueDate;
 
+    @Column(nullable = false)
+    private String originFramework = "thymeleaf";
+
+    @Column(nullable = false)
+    private String userEmail = "kevinerg96@gmail.com";
+
     public Task() {}
 
     public Task(Long taskId, String title, String description,
                 TaskStatus status, TaskPriority priority,
-                LocalDate dueDate) {
+                LocalDate dueDate, String originFramework, String userEmail) {
         this.taskId = taskId;
         this.title = title;
         this.description = description;
         this.status = status;
         this.priority = priority;
         this.dueDate = dueDate;
+        this.originFramework = originFramework;
+        this.userEmail = userEmail;
     }
 
     public Long getTaskId() {
@@ -91,5 +99,21 @@ public class Task {
 
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public String getOriginFramework() {
+        return originFramework;
+    }
+
+    public void setOriginFramework(String originFramework) {
+        this.originFramework = originFramework;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }
