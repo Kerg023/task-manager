@@ -58,17 +58,18 @@ public class ApiPokemon {
 
     public static class Ability {
 
-        private String name;
+        private AbilityInfo ability;
 
-        public String getName() {
-            return name;
+        public AbilityInfo getAbility() {
+            return ability;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setAbility(AbilityInfo ability) {
+            this.ability = ability;
         }
     }
 
+   
     public static class AbilityInfo {
 
         private String name;

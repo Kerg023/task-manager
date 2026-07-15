@@ -2,7 +2,9 @@ package com.kevin.taskmanager.pokeapi;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
 
 @Controller
 public class PokeApiController {
@@ -19,7 +21,7 @@ public class PokeApiController {
 
     @GetMapping("/pokedex/buscar")
     public String buscar(@RequestParam String nombre) {     
-        return "redirect:/pokedex?nombre=" + nombre;
+        return "redirect:/pokedex/" + nombre;
     }
 
     @GetMapping("/pokedex/{name}")
@@ -27,7 +29,7 @@ public class PokeApiController {
         try{
             model.addAttribute("pokemon", pokeApiService.getPokemonByName(name));
         } catch (Exception e) {
-            model.addAttribute("error", "No se encontro un pokemon conel nombre: " + name);
+            model.addAttribute("error", "No se encontro un pokemon con el nombre: " + name);
         }
         return "pokedex-result";
     }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon</title>
+
+</head>
+<body>
+    <div class="form-conteiner">
+        <h1> Busca un Pokemon</h1>
+        <form th:action="@{/pokedex/buscar}" method="get">
+            <input type="text" name="nombre" placeholder="Nombre del Pokemon" >
+            <button type="submit" class="btn" >Buscar Pokemon</button>
+        </form>
+        <a th:href="@{/tasks}" class="btn">Volver</a>
+    </div>
+    
+</body>
+</html>
